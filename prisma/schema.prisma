@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Verse {
+  id        String          @id
+  book      String
+  chapter   Int
+  number    Int
+  locations VerseLocation[]
+}
+
+model Location {
+  id        String          @id
+  mainName  String
+  names     LocationName[]
+  latitude  Float
+  longitude Float
+  verses    VerseLocation[]
+}
+
+model LocationName {
+  id         String   @id
+  name       String
+  location   Location @relation(fields: [locationId], references: [id])
+  locationId String
+}
+
+model VerseLocation {
+  verse      Verse    @relation(fields: [verseId], references: [id])
+  verseId    String
+  location   Location @relation(fields: [locationId], references: [id])
+  locationId String
+
+  @@id([verseId, locationId])
+}
